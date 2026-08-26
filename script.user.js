@@ -26,7 +26,7 @@
 // @grant       GM.setValue
 // @grant       GM.xmlHttpRequest
 //
-// @version     1.4.19
+// @version     1.4.20
 // @author      tophf
 //
 // @original-version 2017.9.29
@@ -1817,7 +1817,8 @@ const Ruler = {
           Ruler.toggle(rule, 'q', url.includes('.html'));
           return a || url.includes('.png') ? url : [url, url.replace(/\.jpe?g/, '.png')];
         },
-        _q: (text, doc, n) => (n = $('input[value*="/big/"]', doc)) && n.value,
+        _q: (text, doc, n) => (n = $('input[value*="/big/"]', doc)) && n.value ||
+          $prop('a[href*="/big/"]', 'href', doc),
       },
       {
         u: '||flickr.com/photos/',
