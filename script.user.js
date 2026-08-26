@@ -59,11 +59,11 @@
 'use strict';
 
 //#region Globals
-/*global GM_addElement, GM_addStyle */
+
 /** @type mpiv.Config */
 let cfg;
 /** @type mpiv.AppInfo */
-let ai = {rule: {}};
+let ai = {rule: {}}; // eslint-disable-line no-redeclare
 /** @type Element */
 let elSetup;
 let nonce;
@@ -72,7 +72,7 @@ const doc = document;
 const hostname = location.hostname;
 const dotDomain = '.' + hostname;
 const isFF = CSS.supports('-moz-appearance', 'none');
-const AudioContext = window.AudioContext || function () {};
+const {AudioContext = function () {}} = window; // eslint-disable-line no-redeclare
 const {from: arrayFrom, isArray} = Array;
 
 const PREFIX = 'mpiv-';
@@ -822,10 +822,10 @@ const CspSniffer = {
           set[i] = new RegExp(
             (/^\w+:/.test(item) ? '^' : '^\\w+://') +
             item
-            .replace(/[.+?^$|()[\]{}]/g, '\\$&')
-            .replace(/(\\\.)?(\*)(\\\.)?/g, (_, a, b, c) =>
-              `${a ? '\\.?' : ''}[^:/]*${c ? '\\.?' : ''}`)
-            .replace(/[^/]$/, '$&/'));
+              .replace(/[.+?^$|()[\]{}]/g, '\\$&')
+              .replace(/(\\\.)?(\*)(\\\.)?/g, (_, a, b, c) =>
+                `${a ? '\\.?' : ''}[^:/]*${c ? '\\.?' : ''}`)
+              .replace(/[^/]$/, '$&/'));
         }
       });
     }
@@ -891,7 +891,7 @@ const Events = {
       App.deactivate();
   },
 
-  onMouseOutThrottled(e) {
+  onMouseOutThrottled(/*e*/) {
     const d = Events.hoverData;
     if (d) d.nodeOut = this;
     this.removeEventListener('mouseout', Events.onMouseOutThrottled);
@@ -1120,7 +1120,7 @@ const Events = {
     }
   },
 
-  onVisibility(e) {
+  onVisibility(/*e*/) {
     Events.ctrl = false;
   },
 
@@ -1187,7 +1187,8 @@ const Gallery = {
   },
 
   findIndex(gUrl) {
-    return Math.max(0, ai.gItems.findIndex(({url}) => isArray(url) ? url.includes(gUrl) : url === gUrl));
+    return Math.max(0,
+      ai.gItems.findIndex(({url}) => isArray(url) ? url.includes(gUrl) : url === gUrl));
   },
 
   next(dir) {
@@ -2422,7 +2423,8 @@ const RuleMatcher = {
         return m;
       const {r, s} = rule;
       let hasS = s != null;
-      h = !(noHtml && rule === ai.rule) && (r || hasS) && rule.html && (html || (html = node.outerHTML));
+      h = !(noHtml && rule === ai.rule) && (r || hasS) && rule.html &&
+        (html || (html = node.outerHTML));
       if (r) {
         m = h ? r.exec(h) : url && r.exec(url);
       } else {
@@ -2917,7 +2919,7 @@ const Util = {
       return App.NOP || (trustedScript
         // eslint-disable-next-line no-eval
         ? window.eval(trustedScript(`(function anonymous(${args.slice(0, -1).join(',')}){${args.slice(-1)[0]}})`))
-        : new Function(...args)
+        : new Function(...args) // eslint-disable-line no-new-func
       );
     } catch (e) {
       if (!RX_EVAL_BLOCKED.test(e.message))
@@ -3091,7 +3093,8 @@ async function setup({rule} = {}) {
       el.elOpacity.elColor = el;
     }
     function onMove({x, y}) {
-      x = moveBaseX = clamp(x - moveX, -innerWidth + CSS_SETUP_X * 4, elSetup.clientWidth - CSS_SETUP_X);
+      x = moveBaseX = clamp(x - moveX,
+        -innerWidth + CSS_SETUP_X * 4, elSetup.clientWidth - CSS_SETUP_X);
       y = moveBaseY = clamp(y - moveY, 0, innerHeight - CSS_SETUP_X * 3);
       $css(mover, {transform: `translate(${x}px, ${y}px)`});
       UI._ul.style.maxHeight = `calc(100vh - ${CSS_SETUP_MAX_Y + y - CSS_SETUP_X}px)`;
@@ -4123,7 +4126,7 @@ const flattenHtml = str =>
   str.trim().replace(/\n\s*/g, '');
 
 const dropEvent = e =>
-  (e.preventDefault(), e.stopPropagation());
+  ((e.preventDefault(), e.stopPropagation()));
 
 const ensureArray = v =>
   isArray(v) ? v : [v];

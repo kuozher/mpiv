@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "checkJs": true
+    "target": "es2018"
   },
   "typeAcquisition": {
     "include": [
-      "types/types.d.ts", 
-      "types/types-gm3.d.ts", 
-      "types/types-gm4.d.ts"
+      "./types.d.ts",
+      "@violentmonkey/types"
     ]
   }
 }

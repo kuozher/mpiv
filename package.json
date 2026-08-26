@@ -1,0 +1,8 @@
+{
+  "name": "mpiv",
+  "main": "script.user.js",
+  "dependencies": {
+    "globals": "^17.11.0",
+    "@violentmonkey/types": "^0.3.4"
+  }
+}
