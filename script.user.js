@@ -26,7 +26,7 @@
 // @grant       GM.setValue
 // @grant       GM.xmlHttpRequest
 //
-// @version     1.4.20
+// @version     1.4.21
 // @author      tophf
 //
 // @original-version 2017.9.29
@@ -797,7 +797,7 @@ const CspSniffer = {
     const isVideo = Util.isVideoUrl(url);
     let mode;
     if (this.csp) {
-      const src = this.csp[isVideo ? 'media' : 'img'];
+      const src = this.csp[isVideo ? 'media' : 'img'] || this.csp.default;
       if (!src.some(this._srcMatches, url))
         mode = [mode, 'blob', 'data'].find(m => src.includes(`${m}:`));
     }
@@ -814,9 +814,7 @@ const CspSniffer = {
       nonce = RegExp.$1;
     if ((src.trusted || []).includes("'script'"))
       App.NOP = () => {};
-    if (!src.img) src.img = src.default || [];
-    if (!src.media) src.media = src.default || [];
-    for (const set of [src.img, src.media]) {
+    for (const set of new Set([src.img || src.default, src.media || src.default])) {
       set.forEach((item, i) => {
         if (item !== '*' && item.includes('*')) {
           set[i] = new RegExp(
@@ -2170,6 +2168,7 @@ const Ruler = {
         u: '||wiki',
         r: /\/(?:thumb|images)\/.+\.(?:jpe?g|gif|png|svg)/i,
         s: m => m.input.replace(/\/(thumb(?=\/)|\d+px[^/]+(?=$|\?))/g, '')
+          .replace('//thumb.wikimedia.org/', '//upload.wikimedia.org/')
           .replace(/\/(scale-to-width(-[a-z]+)?\/\d+|(zoom-crop|smart)(\/(width|height)\/\d+)+)/g, '/'),
         xhr: !hostname.includes('wiki'),
       },
