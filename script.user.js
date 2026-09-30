@@ -3,6 +3,7 @@
 // @namespace   https://github.com/tophf
 // @description Shows images and videos behind links and thumbnails.
 //
+// @match       *://*/*
 // @include     *
 // @run-at      document-start
 //
@@ -56,7 +57,7 @@
 // @icon        https://raw.githubusercontent.com/tophf/mpiv/master/icon.png
 // ==/UserScript==
 
-'use strict';
+// 'use strict'; // disabled for Safari Userscripts compatibility
 
 //#region Globals
 
@@ -103,24 +104,24 @@ const FN_ARGS = {
 let timerProgress;
 let trustedHTML, trustedScript;
 //#endregion
-//#region GM4 polyfill
+//#region GM4 polyfill (Safari Userscripts compatible)
 
-if (typeof GM === 'undefined' || !GM.xmlHttpRequest)
-  this.GM = {__proto__: null, info: GM_info};
+const _g = typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this);
+if (typeof GM === 'undefined') _g.GM = {__proto__: null, info: typeof GM_info !== 'undefined' ? GM_info : {}};
 if (!GM.getValue)
-  GM.getValue = GM_getValue; // we use it only with `await` so no need to return a Promise
+if (typeof GM_getValue !== 'undefined') GM.getValue = GM_getValue;
 if (!GM.setValue)
-  GM.setValue = GM_setValue; // we use it only with `await` so no need to return a Promise
+if (typeof GM_setValue !== 'undefined') GM.setValue = GM_setValue;
 if (!GM.openInTab)
-  GM.openInTab = GM_openInTab;
+if (typeof GM_openInTab !== 'undefined') GM.openInTab = GM_openInTab;
 if (!GM.registerMenuCommand && typeof GM_registerMenuCommand === 'function')
   GM.registerMenuCommand = GM_registerMenuCommand;
 if (!GM.unregisterMenuCommand && typeof GM_unregisterMenuCommand === 'function')
   GM.unregisterMenuCommand = GM_unregisterMenuCommand;
 if (!GM.setClipboard)
-  GM.setClipboard = GM_setClipboard;
+if (typeof GM_setClipboard !== 'undefined') GM.setClipboard = GM_setClipboard;
 if (!GM.xmlHttpRequest)
-  GM.xmlHttpRequest = GM_xmlhttpRequest;
+if (typeof GM_xmlhttpRequest !== 'undefined') GM.xmlHttpRequest = GM_xmlhttpRequest;
 
 //#endregion
 
